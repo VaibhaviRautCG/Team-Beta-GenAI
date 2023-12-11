@@ -2,24 +2,37 @@
 GenAI Hackathon project with Service Now : Automating Chatbot self-services.
 
 # Installations
-Install Flask
-> pip install Flask
+#### Install Flask
+
+```bash
+pip install Flask
+``` 
 
 # Create a Virtual Environment
-> python -m venv venv <br>
+```bash
+python -m venv venv
+``` 
+<br>
  
->venv\Scripts\activate
+```bash 
+venv\Scripts\activate
+```
 
 # To Run Flask app
-Start with installing requirements <br>
-&nbsp; Note: this is yet to be setup: 
-> pip3 install -r requirements.txt <br>
+#### Start with installing requirements <br>
+> Note: this is yet to be setup: 
 
-Normally Run the application: 
-> flask run 
+```bash
+pip3 install -r requirements.txt
+```
 
-Run with Debug for dynamic changes to reflect
-> flask --app run.py --debug run 
-
+#### Normally Run the application: 
+```bash 
+flask run 
+```
+#### Run with Debug for dynamic changes to reflect
+```bash
+flask --app run.py --debug run 
+```
 
 
