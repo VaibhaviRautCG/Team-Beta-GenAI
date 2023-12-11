@@ -1,1 +1,14 @@
 .png
+
+
+#environment
+.env
+
+# venv
+env
+venv
+antenv
+
+# other
+.DS_Store
+.vscode/
