@@ -35,4 +35,24 @@ flask run
 flask --app run.py --debug run 
 ```
 
+# Git Commands
+NOTE:
+- Always make changes in your local branch and not main
+- Always pull from main andmake sure the merge conflicts if any are resolved. 
 
+### Check current branch
+```bash
+git branch
+```
+To list all branches: 
+```bash
+git branch -a
+```
+
+### fetch new changes from main on local main.
+
+```bash
+git fetch
+```
+
+### To 
