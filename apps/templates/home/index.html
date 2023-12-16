@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <title>Flask App</title>
-</head>
-<body>
+{% extends "layouts/base.html" %}
+
+{% block content %}
+    
     <h1>Hello, Flask!</h1>
     <a href="/chatbot">Chatbot Page...</a>
-</body>
-</html>
+
+
+{% endblock content %}
