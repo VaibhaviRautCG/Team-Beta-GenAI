@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <title>Chatbot</title>
-</head>
-<body>
+{% extends "layouts/base.html" %}
+
+{% block content %}
+
     <h1>Chatbot Here!</h1>
+<<<<<<< HEAD
     <input type="text" id="user-input">
     <button type="submit" onclick="sendMessage()">Submit</button>
     <br/>
@@ -39,3 +35,7 @@
     }
 </script>
 </html>
+=======
+
+{% endblock content %}
+>>>>>>> d105a38deb985b74b83506f5f34e31ea242c068d

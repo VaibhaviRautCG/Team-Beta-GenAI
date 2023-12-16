@@ -39,6 +39,19 @@ flask --app run.py --debug run
 NOTE:
 - Always make changes in your local branch and not main
 - Always pull from main andmake sure the merge conflicts if any are resolved. 
+To pull from main
+```bash
+git pull origin main
+```
+To pull from branch onto your local branch copy
+```bash
+git pull origin <branchname>
+```
+
+### Check list of conflict files
+```bash
+git diff --name-only --diff-filter=U --relative
+```
 
 ### Check current branch
 ```bash
