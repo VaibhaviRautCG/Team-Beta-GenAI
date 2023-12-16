@@ -48,11 +48,31 @@ To list all branches:
 ```bash
 git branch -a
 ```
+### Switch between branches
+```bash
+git checkout <branch_name>
+```
 
-### fetch new changes from main on local main.
+### Fetch new changes from main on local main.
 
 ```bash
 git fetch
 ```
 
-### To 
+### To commit follow the steps:
+Check status of of your branch
+```bash
+git status
+```
+Add the files to be commited
+```bash
+git add .
+```
+Commit the changes into your local branch
+```bash
+git commit -m '<commit message>'
+```
+Push commited changes to local branch
+```bash
+git push
+```
