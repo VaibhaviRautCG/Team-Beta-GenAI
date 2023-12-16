@@ -19,4 +19,4 @@ def register_blueprints(app):
     # Register each blueprint
     for module_name in module_names:
         module = import_module(f'apps.{module_name}.routes')
-        app.register_blueprint(module.blueprint, url_prefix=f'/{module_name}')
+        app.register_blueprint(module.blueprint)
