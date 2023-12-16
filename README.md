@@ -76,3 +76,8 @@ Push commited changes to local branch
 ```bash
 git push
 ```
+### Pull Requests
+- Go to your Github repository on the web browser and navigate to your branch. 
+- Pull from main and make sure all merge conflicts are resolved.
+- Create a pull request and assign reviewer. Add details to description as much as possible.
+
