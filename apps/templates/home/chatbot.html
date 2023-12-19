@@ -2,36 +2,142 @@
 
 {% block content %}
 
-    <h1>Chatbot Here!</h1>
+<div class="content">
+    <div class="row">
+        <div class="col-md-10">
+            <h1>Chatbot Here!</h1>
+            <div class="card-body px-4 py-3">
+                <form id="chatform" role="form" method="post" action="">
+                    {% include 'common/chat.html' %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
     <input type="text" id="user-input">
     <button type="submit" onclick="sendMessage()">Submit</button>
     <br/>
     <p id="chat-log"></p>
 
-    <script>
-        function sendMessage() {
-            var userMessage = document.getElementById("user-input").value;
-            appendMessage("You: " + userMessage);
-    
-            // Use AJAX to send the userMessage to the server
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "/get_response", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    var botResponse = JSON.parse(xhr.responseText).bot_response;
-                    appendMessage("SimpleBot: " + botResponse);
-                }
-            };
-            xhr.send("user_message=" + userMessage);
-    
-            document.getElementById("user-input").value = "";
-        }
-    
-        function appendMessage(message) {
-            var chatLog = document.getElementById("chat-log");
-            chatLog.innerHTML += "<p>" + message + "</p>";
-        }
-    </script>
-
 {% endblock content %}
+
+{% block javascripts %}
+    <script>
+
+let hiddenInputCount = 0;
+
+function populateChat(data) {
+    const div = document.getElementById("chat-container");
+    const divscroll = document.getElementById("chat-scroll");
+    const row = document.createElement("div");
+
+    var dateTime = new Date();
+    var time = dateTime.toLocaleTimeString();
+
+    // Create a unique ID for the hidden input
+    const hiddenInputId = `hiddenInput_${hiddenInputCount}`;
+    hiddenInputCount++;
+
+    // Create a hidden input with the content
+    const hiddenInput = document.createElement('input');
+    hiddenInput.type = 'text';
+    hiddenInput.value = data.content;
+    hiddenInput.style.display = 'none';
+    hiddenInput.id = hiddenInputId;
+
+    document.body.appendChild(hiddenInput);
+
+    if (data.role === 'user') {
+        row.innerHTML = `
+            <p class="text-warning" style="font-weight: bold; line-height: 1.2;"><i class="bi bi-person-circle"></i>  You
+                <a class="publisher-btn text-info" name="Copy text" style="float: right"
+                    onclick="copyText('${hiddenInputId}')" href="#" data-abc="true">
+                    <i class="bi bi-copy" style="font-size: small; color: lightgrey;"></i>
+                </a>
+                <span style="font-weight: normal; font-size: smaller; color: lightgrey; float: right">${time}&nbsp;</span>
+            </p>
+            <pre style="border-radius: 5px"><code><span style="text-wrap: wrap; font-size: small;">${data.content}</span></code></pre>
+        `;
+    } else if (data.content === 'Something went wrong. Please try again.') {
+        row.innerHTML = `
+            <p class="text-primary" style="font-weight: bold; line-height: 1.2;"><i class="bi bi-robot"></i>  Sogeti GenAI Copilot</p>
+            <pre style="border-radius: 5px"><code><span class="text-danger" style="text-wrap: wrap; font-size: small;">${data.content}</span></code></pre>
+        `;
+    } else {
+        row.innerHTML = `
+            <p class="text-primary" style="font-weight: bold; line-height: 1.2;"><i class="bi bi-robot"></i>  Sogeti GenAI Copilot
+                <a class="publisher-btn text-info" name="Copy text" style="float: right"
+                    onclick="copyText('${hiddenInputId}')" href="#" data-abc="true">
+                    <i class="bi bi-copy" style="font-size: small; color: lightgrey;"></i>
+                </a>
+            </p>
+            <pre style="border-radius: 5px"><code><span style="text-wrap: wrap; font-size: small;">${data.content}</span></code></pre>
+        `;
+    }
+
+    div.appendChild(row);
+    divscroll.scrollTop = divscroll.scrollHeight;
+
+}
+
+$(document).ready(function() {
+    $("#chat-submit-btn").click(function() {
+        var userMessage = $("#message").val();
+        if (userMessage.trim() === '') {
+            return;
+        };
+        var valLoader = document.getElementById("loader");
+        var chatContainer = document.getElementById("chat-container");
+        valLoader.style.display = "inline-block";
+        chatContainer.style.display = "block";
+        populateChat({'role': 'user', 'content': userMessage});
+
+        $.ajax({
+            type: "POST",
+            url: "/chatbot",
+            data: { message: userMessage },
+            dataType: 'json',
+            success: function(response) {
+                $("#message").val('');
+                var arr = response.out;
+                populateChat(arr[arr.length - 1]);
+                valLoader.style.display = "none";
+            },
+            error: function(error) {
+                console.log(error);
+                valLoader.style.display = "none";
+            }
+        });
+    });
+});
+
+
+
+        // function sendMessage() {
+        //     var userMessage = document.getElementById("user-input").value;
+        //     appendMessage("You: " + userMessage);
+    
+        //     // Use AJAX to send the userMessage to the server
+        //     var xhr = new XMLHttpRequest();
+        //     xhr.open("POST", "/get_response", true);
+        //     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        //     xhr.onreadystatechange = function () {
+        //         if (xhr.readyState === 4 && xhr.status === 200) {
+        //             var botResponse = JSON.parse(xhr.responseText).bot_response;
+        //             appendMessage("SimpleBot: " + botResponse);
+        //         }
+        //     };
+        //     xhr.send("user_message=" + userMessage);
+    
+        //     document.getElementById("user-input").value = "";
+        // }
+    
+        // function appendMessage(message) {
+        //     var chatLog = document.getElementById("chat-log");
+        //     chatLog.innerHTML += "<p>" + message + "</p>";
+        // }
+    </script>
+{% endblock javascripts %}
+
