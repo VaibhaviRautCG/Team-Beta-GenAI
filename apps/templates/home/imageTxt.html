@@ -5,10 +5,12 @@
 <div class="content">
     <div class="row">
         <div class="col-md-10">
-            <h1>Chatbot Here!</h1>
+            <h1>Image To Text Read!</h1>
             <div class="card-body px-4 py-3">
-                <form id="chatform" role="form" method="post" action="">
-                    {% include 'common/chat.html' %}
+                <h1>Azure Computer Vision Flask App</h1>
+                <form action="/upload" method="post" enctype="multipart/form-data">
+                    <input type="file" name="image" accept=".jpg, .jpeg, .png">
+                    <input type="submit" value="Upload">
                 </form>
             </div>
         </div>

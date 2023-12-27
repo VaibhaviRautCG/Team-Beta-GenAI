@@ -3,3 +3,4 @@ from wtforms import TextAreaField
 
 class ChatForm(FlaskForm):
     message = TextAreaField('Message')
+    

@@ -1,8 +1,10 @@
 from flask import jsonify, render_template, request
 from apps import create_app
 from apps.simple_chatbot import get_response  # Import your chatbot function
+import os
 
 app = create_app()
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default-secret-key')
 
 @app.route('/')
 def hello_world():
