@@ -8,7 +8,6 @@
             <h1>OpenAI Chatbot</h1>
             <div class="card-body px-4 py-3">
                 <form id="chatform" role="form" method="post" action="">
-                    {{ form.hidden_tag }}
                     {{ form.csrf_token }}
                     <label for="user_message">Your message:</label><br>
                     {{ form.message(size=50) }}<br><br>
@@ -23,15 +22,18 @@
             </div>
         </div>
     </div>
-</div>
-    
-<!-- <input type="text" id="user-input">
-<button type="submit" onclick="sendMessage()">Submit</button>
-<br/>
-<p id="chat-log"></p> -->
 
 {% endblock content %}
 
 {% block javascripts %}
-<script></script>
+<script>
+    function sendMessage() {
+        var userMessage = document.getElementById("user-message").value;
+
+        // Display user message in chat box
+        console.log("User: " + userMessage);
+
+        // ... (rest of the code)
+    }
+</script>
 {% endblock javascripts %}
