@@ -6,14 +6,14 @@
     <div class="row">
         <div class="col-md-10 container">
             <h1>OpenAI Chatbot</h1>
-            <div id="myDiv">
+            <div id="chat-history">
                 {% for message in chat_history %}
-                    <p class="user-block icon"><i class="bi bi-person-fill"></i>You: {{ message.user_message }} <span class="timestamp">{{ message.timestamp.strftime('%H:%M') }}</span> </p>
-                    <p class="bot-block"><i class="bi bi-robot"></i>Chatbot: {{ message.bot_response }} <span class="timestamp">{{ message.timestamp.strftime('%H:%M') }}</span> </p>
+                    <p class="user-block icon"><i class="bi bi-person-fill"></i><b>You:</b> {{ message.user_message }} <span class="timestamp">{{ message.timestamp.strftime('%H:%M') }}</span> </p>
+                    <p class="bot-block"><i class="bi bi-robot"></i><b>Chatbot:</b> {{ message.bot_response | safe }} <span class="timestamp">{{ message.timestamp.strftime('%H:%M') }}</span> </p>
                 {% endfor %}
-        </div>
+             </div>
+
             <form method="post" onsubmit="clearTextBox()">
-                <!-- <div id="chat-history" onclick="clearChatHistory()"> -->
                 {{ form.csrf_token }}
                 <label for="user_message">Your message:</label><br>
                 {{ form.user_message(id="input", class="input-field", size=50) }}<br><br>
@@ -30,22 +30,6 @@
 {% block javascripts %}
 <script>
 
-    function checkInputs() {
-        const nameInput = document.getElementById("input");
-        const submitButton = document.querySelector(".send-button");
-
-        const nameValue = nameInput.value.trim();
-        const emailValue = emailInput.value.trim();
-
-        const isInputsValid = nameValue !== "" && emailValue !== "";
-
-        submitButton.disabled = !isInputsValid;
-
-        // Change button color based on validation
-        submitButton.style.backgroundColor = isInputsValid ? "#4caf50" : "#ccc";
-    }
-
-    document.getElementById("name").oninput = checkInputs;
-
+  
 </script>
 {% endblock javascripts %}
