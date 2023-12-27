@@ -111,7 +111,7 @@ def simple_chatbot():
             user_message = form.user_message.data
             # img_txt_res = image_to_text(service_options, vision_source, analysis_options)
             # print("\nTEST: img_txt_res: ", img_txt_res)
-            bot_response = generate_response(user_message)
+            bot_response = generate_response(user_message,Config.OPENAI_GPT_ENGINE)
             print("\nTEST: Bot_response: ", bot_response)
 
             chat_message = ChatMessage(user_message=user_message, bot_response=bot_response)
@@ -137,11 +137,11 @@ def simple_chatbot():
 
 
 
-def generate_response(user_message):
+def generate_response(user_message, engine):
     print(f"User Message: {user_message}")
     prompt = f"User: {user_message}\nBot:"
     response = openai.Completion.create(
-        engine="text-davinci-002",  # Change to the desired GPT-3 engine
+        engine=engine,  # Change to the desired GPT-3 engine
         prompt=prompt,
         temperature=0.7,
         max_tokens=150,

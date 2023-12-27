@@ -14,7 +14,7 @@ try:
     openai.api_key = Config.OPENAI_API_KEY
     # openai.api_base = Config.OPENAI_RESOURCE_ENDPOINT
     # openai.api_version = Config.OPENAI_API_VERSION
-    # openai.engine = Config.OPENAI_GPT_ENGINE
+    openai.engine = Config.OPENAI_GPT_ENGINE
 except Exception as err:
     print(Exception, err)
     traceback.print_exc()

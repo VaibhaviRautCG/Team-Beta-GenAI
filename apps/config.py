@@ -15,6 +15,7 @@ class Config(object):
     SECRET_KEY = os.getenv('SECRET_KEY', 'S#perS3crEt_003')
 
     OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+    OPENAI_GPT_ENGINE = os.getenv('OPENAI_GPT_ENGINE')
 
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(os.getcwd(), 'chat_message.sqlite')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
