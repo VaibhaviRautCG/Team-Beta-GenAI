@@ -1,8 +1,17 @@
 .png
-
+__pycache__/
+erd
+*.pem
 
 #environment
 .env
+
+# database & logs
+*.db
+*.sqlite3
+*.sqlite
+*.log
+apps/ssl
 
 # venv
 env
@@ -12,3 +21,6 @@ antenv
 # other
 .DS_Store
 .vscode/
+
+#vs
+.vs
