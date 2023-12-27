@@ -1,18 +1,19 @@
-from flask import render_template
+from flask import render_template, redirect, request, url_for
 import traceback
 from apps.home import blueprint
+from apps.home.chat.chat import ChatMessage
 from apps.home.forms import  ChatForm
 import openai
 import os
 from apps.config import Config
+from apps import db
 
 # from apps.api.cv_image_txt.txtAnalyser import image_to_text
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-print("\nTEST: openai.api_key: ", openai.api_key)
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-
+# region image vision
 # import azure.ai.vision as sdk
 # service_options = sdk.VisionServiceOptions(os.environ["VISION_ENDPOINT"],
 #                                         os.environ["VISION_KEY"])
@@ -42,6 +43,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # analysis_options.gender_neutral_caption = True
 # analysis_options.cropping_aspect_ratios = [0.9, 1.33]
 
+# endregion
 
 
 @blueprint.route('/',methods=['GET','POST'])
@@ -68,30 +70,71 @@ def chatbot():
         traceback.print_exc()
 
 
+# @blueprint.route('/simple_chatbot',methods=['GET', 'POST'])
+# def simple_chatbot():
+#     form = ChatForm()
+#     chat_history = []
+#     bot_response=''
+
+#     if "submit" in request.form and request.method == 'POST':
+#         user_message = form.user_message.data
+#         # img_txt_res = image_to_text(service_options, vision_source, analysis_options)
+#         # print("\nTEST: img_txt_res: ", img_txt_res)
+#         bot_response = generate_response(user_message)
+#         print("\nTEST: Bot_response: ", bot_response)
+
+#         chat_message = ChatMessage(user_message=user_message, bot_response=bot_response)
+#         db.session.add(chat_message)
+#         db.session.commit()
+
+#         form.user_message.data = ""
+
+#     chat_history = get_chat_history()
+#     return render_template(
+#         "home/simple_chatbot.html",
+#         segment='simple_chatbot',
+#         form=form,
+#         bot_response=bot_response,
+#         chat_history=chat_history
+#     )
+
+
+
 @blueprint.route('/simple_chatbot',methods=['GET', 'POST'])
 def simple_chatbot():
     form = ChatForm()
     chat_history = []
+    bot_response=''
 
-    if form.validate_on_submit():
-        user_message = form.message.data
-        try:
+    if request.method == 'POST':
+        if "submit" in request.form:
+            user_message = form.user_message.data
             # img_txt_res = image_to_text(service_options, vision_source, analysis_options)
             # print("\nTEST: img_txt_res: ", img_txt_res)
             bot_response = generate_response(user_message)
             print("\nTEST: Bot_response: ", bot_response)
-            return render_template(
-                "home/simple_chatbot.html",
-                segment='simple_chatbot',
-                form=form,
-                # bot_response=""
-                bot_response=bot_response
-            )
-        except Exception as err:
-            print("An Error has occurred! Error: ", err)
-            traceback.print_exc()
-    
-    return render_template("home/simple_chatbot.html",segment='simple_chatbot', form=form, bot_response=None)
+
+            chat_message = ChatMessage(user_message=user_message, bot_response=bot_response)
+            db.session.add(chat_message)
+            db.session.commit()
+
+            form.user_message.data = ""
+
+        # elif "clearBtn" in request.form:
+        elif form.clear.data: 
+            # Clear chat history from the database
+            ChatMessage.query.delete()
+            db.session.commit()
+
+    chat_history = get_chat_history()
+    return render_template(
+        "home/simple_chatbot.html",
+        segment='simple_chatbot',
+        form=form,
+        bot_response=bot_response,
+        chat_history=chat_history
+    )
+
 
 
 def generate_response(user_message):
@@ -110,22 +153,33 @@ def generate_response(user_message):
     return response.choices[0].text.strip()
 
 
-@blueprint.route('/imageTxt', methods=['POST'])
-def upload():
-    if 'image' not in request.files:
-        return redirect(url_for('index'))
+def get_chat_history():
+    # Retrieve chat history from the database
+    return ChatMessage.query.order_by(ChatMessage.timestamp).all()
 
-    image_file = request.files['image']
-    if image_file.filename == '':
-        return redirect(url_for('index'))
 
-    # Read the uploaded image
-    image_data = image_file.read()
 
-    # Analyze the image using Azure Computer Vision
-    results = computervision_client.analyze_image_in_stream(image_data, visual_features=['Categories', 'Description'])
 
-    # Extract relevant information from the results
-    description = results.description.captions[0].text
 
-    return render_template('result.html', description=description)
+
+
+
+# @blueprint.route('/imageTxt', methods=['POST'])
+# def upload():
+#     if 'image' not in request.files:
+#         return redirect(url_for('index'))
+
+#     image_file = request.files['image']
+#     if image_file.filename == '':
+#         return redirect(url_for('index'))
+
+#     # Read the uploaded image
+#     image_data = image_file.read()
+
+#     # Analyze the image using Azure Computer Vision
+#     results = computervision_client.analyze_image_in_stream(image_data, visual_features=['Categories', 'Description'])
+
+#     # Extract relevant information from the results
+#     description = results.description.captions[0].text
+
+#     return render_template('result.html', description=description)

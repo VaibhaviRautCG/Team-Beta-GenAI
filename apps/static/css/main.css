@@ -6,3 +6,97 @@ body {
 h1 {
     color: #007BFF;
 }
+
+/* Chat CSS for chat history */
+
+.user-block, .bot-block{
+    border-radius: 3px;
+    padding: 5px;
+}
+
+.user-block{
+    background: plum;
+}
+
+.bot-block{
+    background-color: peachpuff;
+}
+
+.icon {
+    /* font-size: 24px; Adjust the icon size */
+    margin-right: 10px; /* Add spacing between icon and text if needed */
+}
+
+.user-block .icon::before {
+    content: "\f007"; /* Unicode for Font Awesome user icon */
+    color: #007bff; /* Adjust the icon color */
+}
+
+.bot-block .icon::before {
+    content: "\f6e1"; /* Unicode for Font Awesome robot icon */
+    color: #28a745; /* Adjust the icon color */
+}
+
+
+.timestamp {
+    font-size: smaller;
+    color: grey; /* Light dim color for timestamp */
+    margin-left: 10px;
+}
+
+
+
+
+/* Overall CSS */
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 400px;
+    margin: 100px auto;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.input-field {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    outline: none;
+}
+
+.send-button, .clear-button {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.clear-button{
+    background-color: palevioletred;
+}

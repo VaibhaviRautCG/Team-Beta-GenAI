@@ -7,9 +7,33 @@
         <div class="col-md-10">
             <h1>Chatbot Here!</h1>
             <div class="card-body px-4 py-3">
-                <form id="chatform" role="form" method="post" action="">
-                    {% include 'common/chat.html' %}
+                <!-- <form id="chatform" role="form" method="post" action="">
+                    {% include 'common/chatbot.html' %}
+                </form> -->
+
+                <h1>Chatbot with History</h1>
+
+                <div id="chat-history">
+                    {% for message in chat_history %}
+                        <p>User: {{ message.user_message }}</p>
+                        <p>Bot: {{ message.bot_response }}</p>
+                    {% endfor %}
+                </div>
+
+                <form method="post">
+                    {{ form.csrf_token }}
+                    <label for="user_message">Your message:</label><br>
+                    {{ form.user_message(size=50) }}<br><br>
+                    <input type="submit" value="Send">
                 </form>
+
+                {% if bot_response %}
+                <h3>Bot's Response:</h3>
+                <p>{{ bot_response }}</p>
+                {% endif %}
+
+
+
             </div>
         </div>
     </div>
