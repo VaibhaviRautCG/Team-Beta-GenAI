@@ -27,10 +27,9 @@ os.environ["OPENAI_API_KEY"] = Config.OPENAI_API_KEY
 def register_blueprints(app):
     # List of module names
     module_names = [
-        'home',
-        # Add more blueprint modules as needed
+        'home'
     ]
-
+    # Add more blueprint modules as needed
     # Register each blueprint
     for module_name in module_names:
         module = import_module(f'apps.{module_name}.routes')

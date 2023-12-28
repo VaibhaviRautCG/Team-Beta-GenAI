@@ -1,49 +1,21 @@
+import base64
 from flask import render_template, redirect, request, url_for
 import traceback
+from apps.api.cv_image_txt.txtAnalyser import extract_text_from_image
 from apps.home import blueprint
 from apps.home.chat.chat import ChatMessage
 from apps.home.forms import  ChatForm
 import openai
 import os
+from werkzeug.utils import secure_filename
 from apps.config import Config
 from apps import db
+from flask_wtf.file import FileAllowed
 
 # from apps.api.cv_image_txt.txtAnalyser import image_to_text
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 SECRET_KEY = os.getenv("SECRET_KEY")
-
-# region image vision
-# import azure.ai.vision as sdk
-# service_options = sdk.VisionServiceOptions(os.environ["VISION_ENDPOINT"],
-#                                         os.environ["VISION_KEY"])
-
-# Image URL
-# vision_source = sdk.VisionSource(
-#     url="https://www.google.com/url?sa=i&url=https%3A%2F%2Fkinsta.com%2Fblog%2F500-internal-server-error%2F&psig=AOvVaw0Bza2dyW7c-rDfkKq_a54A&ust=1703239008591000&source=images&cd=vfe&opi=89978449&ved=0CBAQjRxqFwoTCLj4xvShoIMDFQAAAAAdAAAAABAD"
-# )
-# url="https://learn.microsoft.com/azure/ai-services/computer-vision/media/quickstarts/presentation.png")
-
-# Image File
-# vision_source = sdk.VisionSource(filename="sample.jpg")
-
-# analysis_options = sdk.ImageAnalysisOptions()
-
-# analysis_options.features = (
-#     sdk.ImageAnalysisFeature.CROP_SUGGESTIONS |
-#     sdk.ImageAnalysisFeature.CAPTION |
-#     sdk.ImageAnalysisFeature.DENSE_CAPTIONS |
-#     sdk.ImageAnalysisFeature.OBJECTS |
-#     sdk.ImageAnalysisFeature.PEOPLE |
-#     sdk.ImageAnalysisFeature.TEXT |
-#     sdk.ImageAnalysisFeature.TAGS
-# )
-
-# analysis_options.language = "en"
-# analysis_options.gender_neutral_caption = True
-# analysis_options.cropping_aspect_ratios = [0.9, 1.33]
-
-# endregion
 
 
 @blueprint.route('/',methods=['GET','POST'])
@@ -70,35 +42,6 @@ def chatbot():
         traceback.print_exc()
 
 
-# @blueprint.route('/simple_chatbot',methods=['GET', 'POST'])
-# def simple_chatbot():
-#     form = ChatForm()
-#     chat_history = []
-#     bot_response=''
-
-#     if "submit" in request.form and request.method == 'POST':
-#         user_message = form.user_message.data
-#         # img_txt_res = image_to_text(service_options, vision_source, analysis_options)
-#         # print("\nTEST: img_txt_res: ", img_txt_res)
-#         bot_response = generate_response(user_message)
-#         print("\nTEST: Bot_response: ", bot_response)
-
-#         chat_message = ChatMessage(user_message=user_message, bot_response=bot_response)
-#         db.session.add(chat_message)
-#         db.session.commit()
-
-#         form.user_message.data = ""
-
-#     chat_history = get_chat_history()
-#     return render_template(
-#         "home/simple_chatbot.html",
-#         segment='simple_chatbot',
-#         form=form,
-#         bot_response=bot_response,
-#         chat_history=chat_history
-#     )
-
-
 
 @blueprint.route('/simple_chatbot',methods=['GET', 'POST'])
 def simple_chatbot():
@@ -106,11 +49,50 @@ def simple_chatbot():
     chat_history = []
     bot_response=''
 
+    allowed_extensions = get_allowed_extensions(form.image)
+
     if request.method == 'POST':
         if "submit" in request.form:
+
+            print("\nTEST: Entire form Data: ",form.data)
+
             user_message = form.user_message.data
-            # img_txt_res = image_to_text(service_options, vision_source, analysis_options)
-            # print("\nTEST: img_txt_res: ", img_txt_res)
+
+            image = form.image.data
+            print("\nTEST: image data from form: ", image)
+            file = request.files['image']
+
+            # If the user does not select a file, the browser submits an empty file without a filename
+            if file.filename == '':
+                return render_template('index.html', error='No selected file')
+
+            # Check if the file is allowed based on the file extension (you can extend this check)
+            allowed_extensions = {'png', 'jpg', 'jpeg'}
+            if '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() not in allowed_extensions:
+                return render_template('index.html', error='Invalid file type. Please upload an image.')
+            
+            # Read the image data
+            
+
+            # Extract text from the image
+            extracted_text = extract_text_from_image(file)
+
+            # Check if a file is selected before accessing its attributes
+            # if image:
+            #     filename = secure_filename(image.filename)
+            #     file_path = f'C:/Users/vaibraut/OneDrive - Capgemini/Documents/My Learning/Team Beta GenAI Hackathon/Team-Beta-GenAI/apps/home/images'
+            #     image.save(file_path + f'/{filename}')
+            #     print(f'Success! Image "{filename}" uploaded and processed.')
+            # else:
+            #     print('No file selected.')
+            
+            # if image:
+            #     img_data = form.image.data.read()
+            #     base64_encoded_image = base64.b64encode(img_data).decode('utf-8')
+            #     print("\nTEST: img_data: ", img_data)
+            #     img_result = read_txt_from_img(base64_encoded_image)    
+            #     print("\nTEST: image Text: ", img_result)
+            
             bot_response = generate_response(user_message,Config.OPENAI_GPT_ENGINE)
             print("\nTEST: Bot_response: ", bot_response)
 
@@ -158,28 +140,9 @@ def get_chat_history():
     return ChatMessage.query.order_by(ChatMessage.timestamp).all()
 
 
-
-
-
-
-
-
-# @blueprint.route('/imageTxt', methods=['POST'])
-# def upload():
-#     if 'image' not in request.files:
-#         return redirect(url_for('index'))
-
-#     image_file = request.files['image']
-#     if image_file.filename == '':
-#         return redirect(url_for('index'))
-
-#     # Read the uploaded image
-#     image_data = image_file.read()
-
-#     # Analyze the image using Azure Computer Vision
-#     results = computervision_client.analyze_image_in_stream(image_data, visual_features=['Categories', 'Description'])
-
-#     # Extract relevant information from the results
-#     description = results.description.captions[0].text
-
-#     return render_template('result.html', description=description)
+# probably not working
+def get_allowed_extensions(form_field):
+    for validator in form_field.validators:
+        if isinstance(validator, FileAllowed):
+            return validator.upload_set
+    return []
