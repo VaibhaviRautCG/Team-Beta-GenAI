@@ -6,17 +6,30 @@
     <div class="row">
         <div class="col-md-10 container">
             <h1>OpenAI Chatbot</h1>
-            <div id="myDiv">
+            <div id="chat-history">
                 {% for message in chat_history %}
-                    <p class="user-block icon"><i class="bi bi-person-fill"></i>You: {{ message.user_message }} <span class="timestamp">{{ message.timestamp.strftime('%H:%M') }}</span> </p>
-                    <p class="bot-block"><i class="bi bi-robot"></i>Chatbot: {{ message.bot_response }} <span class="timestamp">{{ message.timestamp.strftime('%H:%M') }}</span> </p>
+                    <p class="user-block icon"><i class="bi bi-person-fill"></i><b>You:</b> {{ message.user_message }} <span class="timestamp">{{ message.timestamp.strftime('%H:%M') }}</span> </p>
+                    <p class="bot-block"><i class="bi bi-robot"></i><b>Chatbot:</b> {{ message.bot_response | safe }} <span class="timestamp">{{ message.timestamp.strftime('%H:%M') }}</span> </p>
                 {% endfor %}
-        </div>
-            <form method="post" onsubmit="clearTextBox()">
-                <!-- <div id="chat-history" onclick="clearChatHistory()"> -->
+                {% if extracted_text %}
+                    <h2>Extracted Text:</h2>
+                    <p>{{ extracted_text }}</p>
+                {% endif %}
+             </div>
+
+            <form method="post" enctype="multipart/form-data">
                 {{ form.csrf_token }}
                 <label for="user_message">Your message:</label><br>
                 {{ form.user_message(id="input", class="input-field", size=50) }}<br><br>
+                {{ form.image.label }}
+                {{ form.image(id='file-input', accept=allowed_extensions | join(', '), onclick="return validateForm()") }}
+                <div id="fileError" style="color: red;"></div>
+                <br>
+                {% if error %}
+                    <p style="color: red;">{{ error }}</p>
+                {% endif %}
+                
+                <!-- <input type="submit" value="Upload"> -->
                 {{ form.submit(class="bi bi-send send-button") }}
                 <br/>
                 {{ form.clear(class="clear-button") }}
@@ -30,22 +43,28 @@
 {% block javascripts %}
 <script>
 
-    function checkInputs() {
-        const nameInput = document.getElementById("input");
-        const submitButton = document.querySelector(".send-button");
+var fileInputElement = document.getElementById('file-input');
 
-        const nameValue = nameInput.value.trim();
-        const emailValue = emailInput.value.trim();
+function checkFileExtension() {
+    if (fileInputElement.files.length > 0) {
+        var fileName = fileInputElement.files[0].name;
+        var fileExtension = '.' + fileName.split('.').pop().toLowerCase();
 
-        const isInputsValid = nameValue !== "" && emailValue !== "";
-
-        submitButton.disabled = !isInputsValid;
-
-        // Change button color based on validation
-        submitButton.style.backgroundColor = isInputsValid ? "#4caf50" : "#ccc";
+        removeFileIcon.style.display = 'inline';
+        toggleButtonIcon.style.display = 'inline';
+        if (allowedExtensions.length > 2 && allowedExtensions.indexOf(fileExtension) === -1) {
+            textErrorMessage.style.display = 'block';                    
+        } else {
+            textErrorMessage.style.display = 'none';
+        }
+    } else {
+        textErrorMessage.style.display = 'none';
+        removeFileIcon.style.display = 'none';
+        toggleButtonIcon.style.display = 'none';
     }
+};
 
-    document.getElementById("name").oninput = checkInputs;
 
+  
 </script>
 {% endblock javascripts %}

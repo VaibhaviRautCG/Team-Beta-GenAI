@@ -12,6 +12,8 @@ h1 {
 .user-block, .bot-block{
     border-radius: 3px;
     padding: 5px;
+    padding-bottom: 10px;
+    width: auto;
 }
 
 .user-block{
@@ -42,6 +44,8 @@ h1 {
     font-size: smaller;
     color: grey; /* Light dim color for timestamp */
     margin-left: 10px;
+    float:right;
+    margin-top: 10px;
 }
 
 
@@ -89,7 +93,7 @@ label {
 }
 
 .send-button, .clear-button {
-    background-color: #4caf50;
+    background-color: black;
     color: #fff;
     padding: 10px;
     border: none;
@@ -98,5 +102,5 @@ label {
     font-size: 16px;
 }
 .clear-button{
-    background-color: palevioletred;
+    background-color: green;
 }

@@ -14,7 +14,7 @@ try:
     openai.api_key = Config.OPENAI_API_KEY
     # openai.api_base = Config.OPENAI_RESOURCE_ENDPOINT
     # openai.api_version = Config.OPENAI_API_VERSION
-    # openai.engine = Config.OPENAI_GPT_ENGINE
+    openai.engine = Config.OPENAI_GPT_ENGINE
 except Exception as err:
     print(Exception, err)
     traceback.print_exc()
@@ -27,10 +27,9 @@ os.environ["OPENAI_API_KEY"] = Config.OPENAI_API_KEY
 def register_blueprints(app):
     # List of module names
     module_names = [
-        'home',
-        # Add more blueprint modules as needed
+        'home'
     ]
-
+    # Add more blueprint modules as needed
     # Register each blueprint
     for module_name in module_names:
         module = import_module(f'apps.{module_name}.routes')
