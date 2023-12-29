@@ -1,7 +1,6 @@
-import base64
-from flask import render_template, redirect, request, url_for
+
+from flask import render_template, request
 import traceback
-from apps.api.cv_image_txt.txtAnalyser import extract_text_from_image
 from apps.home import blueprint
 from apps.home.chat.chat import ChatMessage
 from apps.home.forms import  ChatForm
@@ -12,7 +11,25 @@ from apps.config import Config
 from apps import db
 from flask_wtf.file import FileAllowed
 
-# from apps.api.cv_image_txt.txtAnalyser import image_to_text
+# region Computer Vision
+from PIL import Image
+import pytesseract
+
+import os
+from azure.cognitiveservices.vision.computervision import ComputerVisionClient
+from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
+from msrest.authentication import CognitiveServicesCredentials
+# from azure.cognitiveservices.vision.computervision import TextOperationStatusCodes
+# from azure.core.polling import TextOperationStatusCodes
+
+
+subscription_key = os.environ["VISION_KEY"]
+endpoint = os.environ["VISION_ENDPOINT"]
+
+# print("\nTEST: Engpoint: ", endpoint, "\t key: ", subscription_key)
+credentials = CognitiveServicesCredentials(subscription_key)
+computervision_client = ComputerVisionClient(endpoint, credentials)
+# endregion
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -58,41 +75,23 @@ def simple_chatbot():
 
             user_message = form.user_message.data
 
-            image = form.image.data
-            print("\nTEST: image data from form: ", image)
-            file = request.files['image']
+            # region Image Processing 
+            image_file = request.files["image"]
 
-            # If the user does not select a file, the browser submits an empty file without a filename
-            if file.filename == '':
-                return render_template('index.html', error='No selected file')
+            if image_file.filename == "":
+                return "No selected file"
 
-            # Check if the file is allowed based on the file extension (you can extend this check)
-            allowed_extensions = {'png', 'jpg', 'jpeg'}
-            if '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() not in allowed_extensions:
-                return render_template('index.html', error='Invalid file type. Please upload an image.')
-            
-            # Read the image data
-            
+            # Save the uploaded image
+            file_path = f'C:/Users/vaibraut/OneDrive - Capgemini/Documents/My Learning/Team Beta GenAI Hackathon/Team-Beta-GenAI/apps/home/images'
+            image_path = f"{file_path}/" + image_file.filename
+            image_file.save(image_path)
 
-            # Extract text from the image
-            extracted_text = extract_text_from_image(file)
+            # Extract text using Azure Computer Vision
+            text = extract_text_from_image(image_path)
 
-            # Check if a file is selected before accessing its attributes
-            # if image:
-            #     filename = secure_filename(image.filename)
-            #     file_path = f'C:/Users/vaibraut/OneDrive - Capgemini/Documents/My Learning/Team Beta GenAI Hackathon/Team-Beta-GenAI/apps/home/images'
-            #     image.save(file_path + f'/{filename}')
-            #     print(f'Success! Image "{filename}" uploaded and processed.')
-            # else:
-            #     print('No file selected.')
-            
-            # if image:
-            #     img_data = form.image.data.read()
-            #     base64_encoded_image = base64.b64encode(img_data).decode('utf-8')
-            #     print("\nTEST: img_data: ", img_data)
-            #     img_result = read_txt_from_img(base64_encoded_image)    
-            #     print("\nTEST: image Text: ", img_result)
-            
+            print("\nTEST: Extracted Text from Image: ", text)
+            # endregion
+
             bot_response = generate_response(user_message,Config.OPENAI_GPT_ENGINE)
             print("\nTEST: Bot_response: ", bot_response)
 
@@ -117,6 +116,41 @@ def simple_chatbot():
         chat_history=chat_history
     )
 
+# def extract_text_from_image(image_path):
+#     # Open the image using PIL (Python Imaging Library)
+#     img = Image.open(image_path)
+
+#     # Use pytesseract to extract text from the image
+#     text = pytesseract.image_to_string(img)
+
+#     return text.strip()
+
+def extract_text_from_image(image_path):
+    computervision_client = ComputerVisionClient(
+        endpoint, CognitiveServicesCredentials(subscription_key)
+    )
+
+    with open(image_path, "rb") as image_stream:
+        result = computervision_client.recognize_printed_text_in_stream(image_stream)
+
+    operation_location = result.headers["Operation-Location"]
+
+    operation_id = operation_location.split("/")[-1]
+
+    while True:
+        get_operation_result = computervision_client.get_operation_status(operation_id)
+
+        if get_operation_result.status not in [OperationStatusCodes.RUNNING, OperationStatusCodes.NOT_STARTED]:
+            break
+
+    if get_operation_result.status == OperationStatusCodes.SUCCEEDED:
+        text = ""
+        for region in get_operation_result.recognition_results:
+            for line in region.lines:
+                text += line.text + " "
+        return text.strip()
+
+    return "Text extraction failed"
 
 
 def generate_response(user_message, engine):
