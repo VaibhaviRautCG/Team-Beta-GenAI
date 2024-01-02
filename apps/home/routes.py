@@ -78,8 +78,8 @@ def simple_chatbot():
             # region Image Processing 
             image_file = request.files["image"]
 
-            if image_file.filename == "":
-                return "No selected file"
+            # if image_file.filename == "":
+            #     return "No selected file"
 
             # Save the uploaded image
             file_path = f'C:/Users/vaibraut/OneDrive - Capgemini/Documents/My Learning/Team Beta GenAI Hackathon/Team-Beta-GenAI/apps/home/images'
@@ -87,9 +87,9 @@ def simple_chatbot():
             image_file.save(image_path)
 
             # Extract text using Azure Computer Vision
-            text = extract_text_from_image(image_path)
+            # text = extract_text_from_image(image_path)
 
-            print("\nTEST: Extracted Text from Image: ", text)
+            # print("\nTEST: Extracted Text from Image: ", text)
             # endregion
 
             bot_response = generate_response(user_message,Config.OPENAI_GPT_ENGINE)
