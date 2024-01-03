@@ -94,3 +94,11 @@ git push
 - Pull from main and make sure all merge conflicts are resolved.
 - Create a pull request and assign reviewer. Add details to description as much as possible.
 
+
+<br>
+
+# ANONYMOUS COMMANDS
+### Run without creating byte files.
+```bash
+python -B run.py
+```
