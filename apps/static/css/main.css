@@ -10,11 +10,11 @@
 }
 
 .user-block{
-    background: plum;
+    background: #c8eec3;
 }
 
 .bot-block{
-    background-color: peachpuff;
+    background-color: #edeff6;
 }
 
 .icon {
@@ -84,9 +84,12 @@ label {
     border-radius: 3px;
     outline: none;
 }
-
+.input-group-txt{
+    background: none;
+    border-left: 0px;
+}
 .send-button, .clear-button {
-    background-color: black;
+    background-color: #62d84e;
     color: #fff;
     padding: 10px;
     border: none;
@@ -142,10 +145,19 @@ position: absolute;
     width: 45px;
     height: 45px;
     position: absolute;
+    display: none;
     left: 0px;
     top: 0px;
 }
 .file-input-icon{
     width: 45px;
     height: 45px;
+    cursor: pointer;
+}
+#chat-history{
+    height: 300px;
+    overflow-y: scroll;
+    margin-right: -20px;
+    margin-left: -20px;
+    padding: 20px;
 }
