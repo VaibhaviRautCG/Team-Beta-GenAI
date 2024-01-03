@@ -12,23 +12,27 @@ from apps import db
 from flask_wtf.file import FileAllowed
 
 # region Computer Vision
-from PIL import Image
-import pytesseract
-
+# from PIL import Image
+# import pytesseract
+import asyncio
 import os
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
-from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
+from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
 from msrest.authentication import CognitiveServicesCredentials
-# from azure.cognitiveservices.vision.computervision import TextOperationStatusCodes
-# from azure.core.polling import TextOperationStatusCodes
+
 
 
 subscription_key = os.environ["VISION_KEY"]
 endpoint = os.environ["VISION_ENDPOINT"]
+region = os.environ["VISION_REGION"]
 
 # print("\nTEST: Engpoint: ", endpoint, "\t key: ", subscription_key)
 credentials = CognitiveServicesCredentials(subscription_key)
-computervision_client = ComputerVisionClient(endpoint, credentials)
+computervision_client = ComputerVisionClient(
+    endpoint="https://" + region + ".api.cognitive.microsoft.com/",
+    credentials=credentials
+)
+# computervision_client = ComputerVisionClient(endpoint, credentials)
 # endregion
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -78,18 +82,19 @@ def simple_chatbot():
             # region Image Processing 
             image_file = request.files["image"]
 
-            # if image_file.filename == "":
-            #     return "No selected file"
+            if image_file.filename == "":
+                return "No selected file"
 
             # Save the uploaded image
             file_path = f'C:/Users/vaibraut/OneDrive - Capgemini/Documents/My Learning/Team Beta GenAI Hackathon/Team-Beta-GenAI/apps/home/images'
             image_path = f"{file_path}/" + image_file.filename
             image_file.save(image_path)
 
+            computervision_client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(subscription_key))
             # Extract text using Azure Computer Vision
-            # text = extract_text_from_image(image_path)
+            text = asyncio.run(extract_text_from_image(image_path, computervision_client))
 
-            # print("\nTEST: Extracted Text from Image: ", text)
+            print("\nTEST: Extracted Text from Image: ", text)
             # endregion
 
             bot_response = generate_response(user_message,Config.OPENAI_GPT_ENGINE)
@@ -125,32 +130,39 @@ def simple_chatbot():
 
 #     return text.strip()
 
-def extract_text_from_image(image_path):
-    computervision_client = ComputerVisionClient(
-        endpoint, CognitiveServicesCredentials(subscription_key)
-    )
+async def extract_text_from_image(image_path, computervision_client):
+    
 
     with open(image_path, "rb") as image_stream:
-        result = computervision_client.recognize_printed_text_in_stream(image_stream)
+        poller = computervision_client.recognize_printed_text_in_stream(image_stream)
+    
+    print("\nTEST: extract_text_from_image(): result: ", poller)
 
-    operation_location = result.headers["Operation-Location"]
+    result = poller.result()
+     # Print the final result
+    print("\nTEST: extract_text_from_image(): result: ", result)
 
-    operation_id = operation_location.split("/")[-1]
+    # operation_location = result.headers.get("Operation-Location")
+    
+    # if operation_location:
+    #     print("\nOperation-Location:", operation_location)
 
-    while True:
-        get_operation_result = computervision_client.get_operation_status(operation_id)
+    # operation_id = operation_location.split("/")[-1]
 
-        if get_operation_result.status not in [OperationStatusCodes.RUNNING, OperationStatusCodes.NOT_STARTED]:
-            break
+    # while True:
+    #     get_operation_result = computervision_client.get_operation_status(operation_id)
 
-    if get_operation_result.status == OperationStatusCodes.SUCCEEDED:
-        text = ""
-        for region in get_operation_result.recognition_results:
-            for line in region.lines:
-                text += line.text + " "
-        return text.strip()
+    #     if get_operation_result.status not in [OperationStatusCodes.RUNNING, OperationStatusCodes.NOT_STARTED]:
+    #         break
 
-    return "Text extraction failed"
+    # if get_operation_result.status == OperationStatusCodes.SUCCEEDED:
+    #     text = ""
+    #     for region in get_operation_result.recognition_results:
+    #         for line in region.lines:
+    #             text += line.text + " "
+    #     return text.strip()
+
+    # return "Text extraction failed"
 
 
 def generate_response(user_message, engine):
