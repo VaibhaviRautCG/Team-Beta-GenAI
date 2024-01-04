@@ -12,8 +12,8 @@ from apps import db
 from flask_wtf.file import FileAllowed
 
 # region Computer Vision
-from PIL import Image
-import pytesseract
+# from PIL import Image
+# import pytesseract
 
 import os
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
@@ -82,9 +82,9 @@ def simple_chatbot():
             #     return "No selected file"
 
             # Save the uploaded image
-            file_path = f'C:/Users/vaibraut/OneDrive - Capgemini/Documents/My Learning/Team Beta GenAI Hackathon/Team-Beta-GenAI/apps/home/images'
-            image_path = f"{file_path}/" + image_file.filename
-            image_file.save(image_path)
+            # file_path = f'C:/Users/vaibraut/OneDrive - Capgemini/Documents/My Learning/Team Beta GenAI Hackathon/Team-Beta-GenAI/apps/home/images'
+            # image_path = f"{file_path}/" + image_file.filename
+            # image_file.save(image_path)
 
             # Extract text using Azure Computer Vision
             # text = extract_text_from_image(image_path)

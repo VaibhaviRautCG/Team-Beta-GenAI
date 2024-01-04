@@ -2,9 +2,9 @@
 
 {% block content %}
 
-<div class="content">
+<!-- <div class="content">
     <div class="row">
-        <div class="col-md-10 container">
+        <div class="col-md-10 container"> -->
             <h1>OpenAI Chatbot</h1>
             <div id="chat-history">
                 {% for message in chat_history %}
@@ -19,52 +19,44 @@
 
             <form method="post" enctype="multipart/form-data">
                 {{ form.csrf_token }}
-                <label for="user_message">Your message:</label><br>
-                {{ form.user_message(id="input", class="input-field", size=50) }}<br><br>
-                {{ form.image.label }}
-                {{ form.image(id='file-input', accept=allowed_extensions | join(', '), onclick="return validateForm()") }}
-                <div id="fileError" style="color: red;"></div>
-                <br>
-                {% if error %}
-                    <p style="color: red;">{{ error }}</p>
-                {% endif %}
-                
+                <!-- <label for="user_message">Your message:</label><br>
+                {{ form.user_message(id="input", class="input-field", size=50) }}<br><br> -->                
                 <!-- <input type="submit" value="Upload"> -->
-                {{ form.submit(class="bi bi-send send-button") }}
-                <br/>
-                {{ form.clear(class="clear-button") }}
-                
+                <div class="row mt-4 mb-4">
+                    <div class="col-md-12">
+                      <div class="input-group mb-3">
+                        <span class="input-group-text p-0">
+                        <img id="imageIcon" onclick="openInput()" class="file-input-icon" src="{{ url_for('static', filename='img/image.png') }}"/>
+                          <!-- <i class="file-input-icon fa-solid fa-image"></i> -->
+                          <!-- <input type="file" class="img-uploader"/> -->
+                          {{ form.image(class='file-input', id='file-input', accept=".jpg,.png,.jpeg", onchange="return validateForm()") }}
+                        </span>
+                        {{ form.user_message(id="input", required="true", class="form-control", size=50) }}
+                        
+                        <span class="input-group-text input-group-txt">
+                            <!-- {{ form.submit(class="bi bi-send send-button") }} -->
+                          <button type="submit" id="submit" name="submit" class="btn btn-success submit-btn">
+                            <img class="img-fluid" style="max-width: 25px;" src="{{ url_for('static', filename='img/send-icon.png') }}"/>
+                          </button>
+                        </span>
+                      </div>
+                      <div id="fileNameExtension"> <span id="fileName"></span> <span onclick="removeFile()" id="removeFileIcon"> X Remove File</span></div>
+                    </div>
+                    <div class="col-md-12 mt-3">
+                        {{ form.clear(class="btn btn-lg btn-secondary") }}
+                    </div>
+                  </div>
             </form>
-        </div>
-    </div>
+        <!-- </div>
+    </div> -->
 
 {% endblock content %}
 
 {% block javascripts %}
 <script>
 
-var fileInputElement = document.getElementById('file-input');
 
-function checkFileExtension() {
-    if (fileInputElement.files.length > 0) {
-        var fileName = fileInputElement.files[0].name;
-        var fileExtension = '.' + fileName.split('.').pop().toLowerCase();
-
-        removeFileIcon.style.display = 'inline';
-        toggleButtonIcon.style.display = 'inline';
-        if (allowedExtensions.length > 2 && allowedExtensions.indexOf(fileExtension) === -1) {
-            textErrorMessage.style.display = 'block';                    
-        } else {
-            textErrorMessage.style.display = 'none';
-        }
-    } else {
-        textErrorMessage.style.display = 'none';
-        removeFileIcon.style.display = 'none';
-        toggleButtonIcon.style.display = 'none';
-    }
-};
-
-
+var allowed_extensions = ['.jpg', '.png', '.jpeg']
   
 </script>
 {% endblock javascripts %}

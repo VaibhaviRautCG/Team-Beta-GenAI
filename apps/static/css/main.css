@@ -1,11 +1,4 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-}
 
-h1 {
-    color: #007BFF;
-}
 
 /* Chat CSS for chat history */
 
@@ -17,11 +10,11 @@ h1 {
 }
 
 .user-block{
-    background: plum;
+    background: #c8eec3;
 }
 
 .bot-block{
-    background-color: peachpuff;
+    background-color: #edeff6;
 }
 
 .icon {
@@ -91,9 +84,12 @@ label {
     border-radius: 3px;
     outline: none;
 }
-
+.input-group-txt{
+    background: none;
+    border-left: 0px;
+}
 .send-button, .clear-button {
-    background-color: black;
+    background-color: #62d84e;
     color: #fff;
     padding: 10px;
     border: none;
@@ -103,4 +99,73 @@ label {
 }
 .clear-button{
     background-color: green;
+}
+#removeFileIcon{
+    color: #cc2026;
+    margin-left: 10px;
+    cursor: pointer;
+}
+#fileNameExtension{
+    display: none;
+}
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #f5f5f5;
+}
+.container {
+  max-width: 600px;
+  border: 1px solid #ccf0c7;
+  margin-top: 30px;
+}
+h1 {
+  font-size: 3rem;
+  color: #333;
+}
+button {
+  font-size: 1.2rem;
+  border-radius: 5px;
+}
+a.btn-outline-primary {
+  font-size: 1.5rem;
+}
+.text-block {
+  border: 1px solid #ccc;
+  background: #eef8ec;
+  display: block;
+  padding: 10px;
+  border-radius: 10px;
+  color: #62d84e;
+  font-size: 14px;
+  cursor: pointer;
+}
+.text-block:hover {
+  border: 1px solid #ccc;
+  background: #62d84e;
+  color: #eef8ec;
+}
+.img-uploader{
+  width: 40px;
+height: 40px;
+visibility: hidden;
+position: absolute;
+}
+.file-input{
+    width: 45px;
+    height: 45px;
+    position: absolute;
+    display: none;
+    left: 0px;
+    top: 0px;
+}
+.file-input-icon{
+    width: 45px;
+    height: 45px;
+    cursor: pointer;
+}
+#chat-history{
+    height: 300px;
+    overflow-y: scroll;
+    margin-right: -20px;
+    margin-left: -20px;
+    padding: 20px;
 }
