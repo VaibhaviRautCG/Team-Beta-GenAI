@@ -29,9 +29,9 @@
                         <img id="imageIcon" onclick="openInput()" class="file-input-icon" src="{{ url_for('static', filename='img/image.png') }}"/>
                           <!-- <i class="file-input-icon fa-solid fa-image"></i> -->
                           <!-- <input type="file" class="img-uploader"/> -->
-                          {{ form.image(class='file-input', id='file-input', accept=allowed_extensions | join(', '), onclick="return validateForm()") }}
+                          {{ form.image(class='file-input', id='file-input', accept=".jpg,.png,.jpeg", onchange="return validateForm()") }}
                         </span>
-                        {{ form.user_message(id="input", class="form-control", size=50) }}
+                        {{ form.user_message(id="input", required="true", class="form-control", size=50) }}
                         
                         <span class="input-group-text input-group-txt">
                             <!-- {{ form.submit(class="bi bi-send send-button") }} -->
@@ -40,11 +40,7 @@
                           </button>
                         </span>
                       </div>
-                      <!-- {% if error %}
-                      <p style="color: red;">{{ error }}</p>
-                      <div id="fileError" style="color: red;"></div>
-                      {% endif %} -->
-                      
+                      <div id="fileNameExtension"> <span id="fileName"></span> <span onclick="removeFile()" id="removeFileIcon"> X Remove File</span></div>
                     </div>
                     <div class="col-md-12 mt-3">
                         {{ form.clear(class="btn btn-lg btn-secondary") }}
@@ -59,27 +55,8 @@
 {% block javascripts %}
 <script>
 
-var fileInputElement = document.getElementById('file-input');
 
-function checkFileExtension() {
-    if (fileInputElement.files.length > 0) {
-        var fileName = fileInputElement.files[0].name;
-        var fileExtension = '.' + fileName.split('.').pop().toLowerCase();
-
-        removeFileIcon.style.display = 'inline';
-        toggleButtonIcon.style.display = 'inline';
-        if (allowedExtensions.length > 2 && allowedExtensions.indexOf(fileExtension) === -1) {
-            textErrorMessage.style.display = 'block';                    
-        } else {
-            textErrorMessage.style.display = 'none';
-        }
-    } else {
-        textErrorMessage.style.display = 'none';
-        removeFileIcon.style.display = 'none';
-        toggleButtonIcon.style.display = 'none';
-    }
-};
-
+var allowed_extensions = ['.jpg', '.png', '.jpeg']
   
 </script>
 {% endblock javascripts %}

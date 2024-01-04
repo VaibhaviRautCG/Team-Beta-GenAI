@@ -37,6 +37,27 @@
     function openInput() {
     document.getElementById('file-input').click();
 }
+
+var fileInputElement = document.getElementById('file-input');
+var fileNameExtension = document.getElementById('fileNameExtension');;
+var fileName = document.getElementById('fileName');;
+var textErrorMessage = document.getElementById('textErrorMessage');
+var removeFileIcon = document.getElementById('removeFileIcon');
+var allowed_extensions = ['.jpg', '.png', '.jpeg']
+function validateForm() {
+    if (fileInputElement.files.length > 0) {
+        var getFileName = fileInputElement.files[0].name;
+        fileName.innerText = getFileName;
+        fileNameExtension.style.display = 'inline';
+    } else {
+      fileNameExtension.style.display = 'none';
+    }
+};
+
+function removeFile() {
+  fileInputElement.value = "";
+  fileNameExtension.style.display = 'none';
+}
 </script>
 </body>
 </html>
