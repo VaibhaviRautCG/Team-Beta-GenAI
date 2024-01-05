@@ -12,13 +12,12 @@ from apps import db
 from flask_wtf.file import FileAllowed
 
 # region Computer Vision
-# from PIL import Image
-# import pytesseract
 import asyncio
 import os
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
 from msrest.authentication import CognitiveServicesCredentials
+from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
 
 
 
